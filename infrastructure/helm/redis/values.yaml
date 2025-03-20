@@ -1,0 +1,30 @@
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    password: ""  # To be set during deployment
+  
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+      storageClass: ""
+  
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  
+  service:
+    type: ClusterIP
+    ports:
+      redis: 6379
+  
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true 

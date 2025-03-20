@@ -1,0 +1,124 @@
+global:
+  environment: production
+  domain: stocknews.example.com
+
+mongodb:
+  enabled: true
+  auth:
+    username: admin
+    password: password123
+  primary:
+    persistence:
+      size: 10Gi
+      storageClass: standard
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+redis:
+  enabled: true
+  auth:
+    password: password123
+  master:
+    persistence:
+      size: 5Gi
+      storageClass: standard
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+milvus:
+  enabled: true
+  standalone:
+    enabled: true
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1000m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+    persistence:
+      enabled: true
+      size: 20Gi
+      storageClass: standard
+  etcd:
+    enabled: true
+    persistence:
+      enabled: true
+      size: 5Gi
+      storageClass: standard
+
+backend:
+  enabled: true
+  image:
+    repository: stocknews-backend
+    tag: latest
+    pullPolicy: Always
+  replicaCount: 2
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+  env:
+    - name: DJANGO_SETTINGS_MODULE
+      value: "config.settings"
+    - name: DATABASE_URL
+      value: "mongodb://admin:password123@mongodb:27017/"
+    - name: REDIS_URL
+      value: "redis://:password123@redis-master:6379/0"
+    - name: MILVUS_HOST
+      value: "milvus-standalone"
+    - name: MILVUS_PORT
+      value: "19530"
+  service:
+    type: ClusterIP
+    port: 8000
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: api.stocknews.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+
+frontend:
+  enabled: true
+  image:
+    repository: stocknews-frontend
+    tag: latest
+    pullPolicy: Always
+  replicaCount: 2
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  env:
+    - name: REACT_APP_API_URL
+      value: "http://api.stocknews.example.com/api"
+  service:
+    type: ClusterIP
+    port: 3000
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: stocknews.example.com
+        paths:
+          - path: /
+            pathType: Prefix 

@@ -1,0 +1,11 @@
+apiVersion: v2
+name: milvus
+description: A Helm chart for Milvus vector database deployment
+type: application
+version: 0.1.0
+appVersion: "2.3.3"
+dependencies:
+  - name: milvus
+    version: "4.0.32"
+    repository: "https://milvus-io.github.io/milvus-helm/"
+    condition: milvus.enabled 

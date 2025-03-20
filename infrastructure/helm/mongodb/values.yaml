@@ -1,0 +1,27 @@
+mongodb:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    rootPassword: ""  # To be set during deployment
+    database: stocknews
+    username: stocknews_user
+    password: ""  # To be set during deployment
+  
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: ""
+  
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+  
+  service:
+    type: ClusterIP
+    port: 27017 
